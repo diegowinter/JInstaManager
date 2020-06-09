@@ -16,8 +16,9 @@ import javax.swing.border.LineBorder;
 import org.brunocvcunha.instagram4j.Instagram4j;
 import org.brunocvcunha.instagram4j.requests.payload.InstagramUser;
 
+import jinstamanager.gui.util.TextPrompt;
 import jinstamanager.instagram.requests.GetProfile;
-import jinstamanager.utils.TextPrompt;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
@@ -38,7 +39,7 @@ public class Login extends JPanel {
 		instagramLogin = new jinstamanager.instagram.Login();
 		getProfile = new GetProfile();
 		
-		this.setBounds(0, 0, 900, 500);
+		this.setBounds(0, 0, 800, 500);
 		setLayout(new BorderLayout(0, 0));
 		
 		JPanel panel = new JPanel();
@@ -93,6 +94,7 @@ public class Login extends JPanel {
 						ManageFollowers.setUsername(user.getUsername());
 						ManageFollowers.setCurrentUser(user);
 						ManageFollowers.setInstagram4jInstance(instagram);
+						Profile.setInstagram4jInstance(instagram);
 					}
 				}
 			}

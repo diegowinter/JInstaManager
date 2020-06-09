@@ -11,7 +11,7 @@ public class Content extends JPanel {
 	private static Dashboard dashboard;
 
 	public Content() {
-		this.setBounds(0, 0, 900, 500);
+		this.setBounds(0, 0, 800, 500);
 		setLayout(new CardLayout(0, 0));
 		
 		login = new Login();

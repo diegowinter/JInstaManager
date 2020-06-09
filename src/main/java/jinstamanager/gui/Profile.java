@@ -2,9 +2,14 @@ package jinstamanager.gui;
 
 import javax.swing.JPanel;
 
+import org.brunocvcunha.instagram4j.Instagram4j;
+import org.brunocvcunha.instagram4j.requests.InstagramGetMediaInfoRequest;
+import org.brunocvcunha.instagram4j.requests.payload.InstagramFeedItem;
+import org.brunocvcunha.instagram4j.requests.payload.InstagramGetMediaInfoResult;
 import org.brunocvcunha.instagram4j.requests.payload.InstagramUser;
 
-import jinstamanager.utils.StretchIcon;
+import jinstamanager.gui.util.StretchIcon;
+import jinstamanager.instagram.requests.GetProfile;
 
 import java.awt.GridBagLayout;
 import javax.swing.ImageIcon;
@@ -16,6 +21,7 @@ import java.awt.Insets;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 import java.awt.Component;
 
 import javax.imageio.ImageIO;
@@ -23,6 +29,10 @@ import javax.swing.Box;
 import java.awt.Font;
 import javax.swing.JTextField;
 import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import javax.swing.JScrollPane;
+import javax.swing.JTextPane;
 
 public class Profile extends JPanel {
 
@@ -33,37 +43,57 @@ public class Profile extends JPanel {
 	private static JLabel lblFollowersCount;
 	private static JLabel lblFollowingCount;
 	private static JLabel lblPostsCount;
-	private static JLabel lblUserBio;
 	private static JLabel lblProfilePicture;
-	private JTextField textField;
+	private static JTextField textField;
 	private JButton btnExibirPerfil;
+	private static String currentUsername;
+	
+	private static Instagram4j instagram;
+	private GetProfile getProfile;
+	private JScrollPane scrollPaneBiography;
+	private static JTextPane textPaneBiography;
+	
+	private static InstagramUser currentUser;
 
 	public Profile() {
 		
+		getProfile = new GetProfile();
+		
 		ImageIcon profilePlaceholder = new ImageIcon("res/profile.png");
 		
-		this.setBounds(0, 0, 900, 500);
+		this.setBounds(0, 0, 800, 500);
 		
 		// GridBagLayout settings
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{300, 100, 100, 100, 300, 0};
 		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0};
-		gridBagLayout.columnWeights = new double[]{1.0, 1.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
-		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gridBagLayout.columnWeights = new double[]{1.0, 0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
 		setLayout(gridBagLayout);
 		
 		textField = new JTextField();
 		textField.setFont(new Font("Nirmala UI", Font.PLAIN, 12));
 		GridBagConstraints gbc_textField = new GridBagConstraints();
+		gbc_textField.fill = GridBagConstraints.HORIZONTAL;
 		gbc_textField.gridwidth = 2;
 		gbc_textField.insets = new Insets(0, 0, 5, 5);
-		gbc_textField.fill = GridBagConstraints.HORIZONTAL;
 		gbc_textField.gridx = 1;
 		gbc_textField.gridy = 1;
 		add(textField, gbc_textField);
 		textField.setColumns(10);
 		
 		btnExibirPerfil = new JButton("Exibir perfil");
+		btnExibirPerfil.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(!textField.getText().equals(currentUsername)) {
+					InstagramUser user = null;
+					user = getProfile.getProfile(instagram, textField.getText());
+					if(user != null) {
+						updateContent(user);
+					}
+				}
+			}
+		});
 		btnExibirPerfil.setFont(new Font("Nirmala UI", Font.PLAIN, 12));
 		GridBagConstraints gbc_btnExibirPerfil = new GridBagConstraints();
 		gbc_btnExibirPerfil.insets = new Insets(0, 0, 5, 5);
@@ -167,19 +197,25 @@ public class Profile extends JPanel {
 		gbc_lblPublicaes.gridy = 6;
 		add(lblPublicaes, gbc_lblPublicaes);
 		
-		// User biography
-		lblUserBio = new JLabel("<bio>");
-		lblUserBio.setFont(new Font("Nirmala UI", Font.PLAIN, 12));
-		GridBagConstraints gbc_lblUserBio = new GridBagConstraints();
-		gbc_lblUserBio.gridwidth = 3;
-		gbc_lblUserBio.insets = new Insets(0, 0, 0, 5);
-		gbc_lblUserBio.gridx = 1;
-		gbc_lblUserBio.gridy = 7;
-		add(lblUserBio, gbc_lblUserBio);
+		scrollPaneBiography = new JScrollPane();
+		GridBagConstraints gbc_scrollPaneBiography = new GridBagConstraints();
+		gbc_scrollPaneBiography.gridwidth = 3;
+		gbc_scrollPaneBiography.insets = new Insets(0, 0, 0, 5);
+		gbc_scrollPaneBiography.fill = GridBagConstraints.BOTH;
+		gbc_scrollPaneBiography.gridx = 1;
+		gbc_scrollPaneBiography.gridy = 7;
+		add(scrollPaneBiography, gbc_scrollPaneBiography);
+		
+		textPaneBiography = new JTextPane();
+		textPaneBiography.setFont(new Font("Nirmala UI", Font.PLAIN, 12));
+		scrollPaneBiography.setViewportView(textPaneBiography);
 		
 	}
 	
 	public static void updateContent(InstagramUser user) {
+		currentUser = user;
+		currentUsername = user.getUsername();
+		textField.setText(user.getUsername());
 		try {
 			lblProfilePicture.setIcon(getUserProfilePhoto(user.getProfile_pic_url()));
 		} catch (IOException e) {
@@ -190,7 +226,7 @@ public class Profile extends JPanel {
 		lblFollowersCount.setText(String.valueOf(user.getFollower_count()));
 		lblFollowingCount.setText(String.valueOf(user.getFollowing_count()));
 		lblPostsCount.setText(String.valueOf(user.getMedia_count()));
-		lblUserBio.setText(user.getBiography());
+		textPaneBiography.setText(user.getBiography());
 	}
 	
 	public static ImageIcon getUserProfilePhoto(String imgUrl) throws IOException {
@@ -200,6 +236,10 @@ public class Profile extends JPanel {
 		ImageIcon imageIcon = new ImageIcon(bufferedImage);
 		
 		return imageIcon;
+	}
+	
+	public static void setInstagram4jInstance(Instagram4j instagram4j) {
+		instagram = instagram4j;
 	}
 
 }

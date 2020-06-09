@@ -1,7 +1,7 @@
 /**
  * @(#)StretchIcon.java	1.0 03/27/12
  */
-package jinstamanager.utils;
+package jinstamanager.gui.util;
 
 import java.awt.Component;
 import java.awt.Container;

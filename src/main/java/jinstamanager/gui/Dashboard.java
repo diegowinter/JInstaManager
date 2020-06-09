@@ -13,11 +13,10 @@ public class Dashboard extends JPanel {
 
 	public Dashboard() {
 		
-		this.setBounds(0, 0, 900, 500);
+		this.setBounds(0, 0, 800, 500);
 		setLayout(new BorderLayout(0, 0));
 		profile = new Profile();
 		manageFollowers = new ManageFollowers();
-		
 		
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		add(tabbedPane);

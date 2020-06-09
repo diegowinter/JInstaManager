@@ -4,7 +4,7 @@
 
   <groupId>dev.diegowinter</groupId>
   <artifactId>JInstaManager</artifactId>
-  <version>0.1.0</version>
+  <version>0.2.0</version>
   <packaging>jar</packaging>
 
   <name>JInstaManager</name>
@@ -25,6 +25,11 @@
       <groupId>org.brunocvcunha.instagram4j</groupId>
       <artifactId>instagram4j</artifactId>
       <version>1.14</version>
+    </dependency>
+    <dependency>
+      <groupId>com.itextpdf</groupId>
+      <artifactId>itextpdf</artifactId>
+      <version>5.5.13.1</version>
     </dependency>
   </dependencies>
 </project>

@@ -1,4 +1,4 @@
-package jinstamanager.utils;
+package jinstamanager.gui.util;
 
 import java.awt.*;
 import java.awt.event.*;

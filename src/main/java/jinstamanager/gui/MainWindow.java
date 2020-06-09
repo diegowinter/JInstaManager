@@ -36,7 +36,7 @@ public class MainWindow {
 		}
 		
 		frame = new JFrame();
-		frame.setBounds(100, 100, 900, 500);
+		frame.setBounds(100, 100, 800, 500);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setTitle("JInstaManager");
 		
